@@ -31,6 +31,8 @@
 		
 		// our timer.. at the start the dota_ability_changed gets called a LOT, so this dun fixed it
 		public var timer:Timer = new Timer(250, 1);
+		// our timer for pip removal on hero level up.. there's a delay to showing it so we can't hide the pip instantly
+		public var hlTimer:Timer = new Timer(150, 1);
 		
 		public function PipNumbers() {
 		}
@@ -64,6 +66,21 @@
 					} else if( pips[i] != null ) pips[i] = null;
 					i++;
 				}
+			}
+		}
+		
+		public function gainedLevel( e:TimerEvent ) {
+			// the owner of this UI
+			var pID = this.globals.Players.GetLocalPlayer();
+			
+			// check if the owner exists
+			if( pID != null ) {
+				var i = 0;
+					while (i < 6) {
+						// hide the valve pips
+						if( this.globals.Loader_actionpanel.movieClip.middle.abilities["abilityLevelPips"+i].visible ) this.globals.Loader_actionpanel.movieClip.middle.abilities["abilityLevelPips"+i].visible = false;
+						i++;
+					}
 			}
 		}
 		
@@ -145,6 +162,12 @@
 			timer.start();
 		}
 		
+		public function levelTimer( args:Object ) {
+			// reset the timer so the count is put back to 1
+			hlTimer.reset();
+			hlTimer.start();
+		}
+		
 		public function onLoaded() : void {			
 			//make this UI visible
 			visible = true;
@@ -154,7 +177,9 @@
 			
 			// our events
 			this.gameAPI.SubscribeToGameEvent("dota_ability_changed", this.abilityTimer);
+			this.gameAPI.SubscribeToGameEvent("dota_player_gained_level", this.levelTimer);
 			timer.addEventListener(TimerEvent.TIMER_COMPLETE, abilityChanged);
+			hlTimer.addEventListener(TimerEvent.TIMER_COMPLETE, gainedLevel);
 			
 			// set the pips to null at init, this is probably not needed but MEH
 			for( var i = 0; i < 6; i++) {
