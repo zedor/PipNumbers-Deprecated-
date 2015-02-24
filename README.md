@@ -7,4 +7,19 @@ Shows numbers instead of the normal ability level indicators (pips)
 ###### Usage
 
 * Put the files in their correct folders
+* In Lua, use FireGameEvent( 'send_hero_ent', { player_ID = pID, _ent = PlayerResource:GetSelectedHeroEntity(pID):GetEntityIndex() } )
 
+###### custom_events.txt
+
+```
+"CustomEvents"
+{
+	
+	"send_hero_ent"
+	{
+		"player_ID"		"short"
+		"_ent"		"short"
+	}
+	
+}
+```
