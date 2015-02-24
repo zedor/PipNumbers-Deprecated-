@@ -51,15 +51,17 @@
 			// check if exists
 			if( hero != null ) {
 				
+				splCount = globals.Entities.GetAbilityCount(hero);
 				// iterate through the abilities
 				var i = 0;
 				while (i < splCount) {
 					
 					// assign the ability | GetAbility( entity, slot)
 					var ability = this.globals.Entities.GetAbility( hero, i );
+					//trace("[", i, "/", splCount ,"] ", globals.Abilities.GetAbilityName( ability ));
 					
-					// checks if ability is null, is attribute bonus (no pip needed for that) or is empty.
-					if( ability != null && this.globals.Abilities.GetAbilityName(ability)!="attribute_bonus" && this.globals.Abilities.GetAbilityName(ability)!="") {
+					// checks if ability is null, is attribute bonus (no pip needed for that), is empty or is hidden
+					if( ability != null && this.globals.Abilities.GetAbilityName(ability)!="attribute_bonus" && this.globals.Abilities.GetAbilityName(ability)!="" && !globals.Abilities.IsHidden(ability) ) {
 						
 						// if the pip exists, it updates the text and positioning, otherwise it creates a new one
 						if( pips[i] != null ) updatePip(i, ability);
@@ -82,7 +84,8 @@
 				var i = 0;
 					while (i < splCount) {
 						// hide the valve pips
-						if( this.globals.Loader_actionpanel.movieClip.middle.abilities["abilityLevelPips"+i].visible ) this.globals.Loader_actionpanel.movieClip.middle.abilities["abilityLevelPips"+i].visible = false;
+						if( globals.Loader_actionpanel.movieClip.middle.abilities["abilityLevelPips"+i]!= null )
+							if( this.globals.Loader_actionpanel.movieClip.middle.abilities["abilityLevelPips"+i].visible ) this.globals.Loader_actionpanel.movieClip.middle.abilities["abilityLevelPips"+i].visible = false;
 						i++;
 					}
 			}
@@ -106,8 +109,10 @@
 			// position our pip
 			var pnt:Point = globals.Loader_actionpanel.movieClip.middle.abilities["abilityLevelPips"+slot].localToGlobal(new Point(0,0));
 			var pnt2:Point = globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].localToGlobal(new Point(0,0));
-			pips[slot].x = pnt2.x + ((globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].width*globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].scaleX*globals.Loader_actionpanel.movieClip.middle.scaleX)/2);
+			//pips[slot].x = pnt2.x + ((globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].width*globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].scaleX*globals.Loader_actionpanel.movieClip.middle.scaleX)/2);
+			pips[slot].x = pnt2.x + ((115.3*0.452*globals.Loader_actionpanel.movieClip.middle.scaleX)/2);
 			pips[slot].y = pnt.y - (5*pips[slot].scaleY);
+			
 			
 			// hide the volvo pips
 			this.globals.Loader_actionpanel.movieClip.middle.abilities["abilityLevelPips"+slot].visible = false;
@@ -152,11 +157,20 @@
 			// scaling / positioning
 			var pnt:Point = globals.Loader_actionpanel.movieClip.middle.abilities["abilityLevelPips"+slot].localToGlobal(new Point(0,0));
 			var pnt2:Point = globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].localToGlobal(new Point(0,0));
-			temp.scaleX = globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].scaleX*globals.Loader_actionpanel.movieClip.middle.scaleX;
-			temp.scaleY = globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].scaleY*globals.Loader_actionpanel.movieClip.middle.scaleY;
-			temp.x = pnt2.x + ((globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].width*globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].scaleX*globals.Loader_actionpanel.movieClip.middle.scaleX)/2);
-			temp.y = pnt.y - (5*temp.scaleY);
-
+			//temp.scaleX = globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].scaleX*globals.Loader_actionpanel.movieClip.middle.scaleX;
+			//temp.scaleY = globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].scaleY*globals.Loader_actionpanel.movieClip.middle.scaleY;
+			temp.scaleX = 0.452*globals.Loader_actionpanel.movieClip.middle.scaleX;
+			temp.scaleY = 0.462*globals.Loader_actionpanel.movieClip.middle.scaleY;
+			//temp.x = pnt2.x + ((globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].width*globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].scaleX*globals.Loader_actionpanel.movieClip.middle.scaleX)/2);
+			temp.x = pnt2.x + ((115.3*0.452*globals.Loader_actionpanel.movieClip.middle.scaleX)/2);
+			temp.y = pnt.y - (5*temp.scaleY);	
+			/*
+			trace("[", globals.Abilities.GetAbilityName( ent ), "] ", txField.text);
+			trace("[x,y] ", temp.x, ",", temp.y);
+			trace("[w,h] ", temp.width, ",", temp.height);
+			trace("[abilitywidth]",globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].width);
+			trace("[scaleX,scaleY] ", globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].scaleX, ",", globals.Loader_actionpanel.movieClip.middle.abilities["Ability"+slot].scaleY);
+			*/
 			return temp;
 		}
 		
