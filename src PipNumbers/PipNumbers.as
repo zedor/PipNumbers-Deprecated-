@@ -21,6 +21,9 @@
 	
 	public class PipNumbers extends MovieClip {
 		
+		
+		public var heroEnt:int = -1;
+		public var splCount:int = 8;
 		// volvo stuff
 		public var gameAPI:Object;
 		public var globals:Object;
@@ -50,7 +53,7 @@
 				
 				// iterate through the abilities
 				var i = 0;
-				while (i < 6) {
+				while (i < splCount) {
 					
 					// assign the ability | GetAbility( entity, slot)
 					var ability = this.globals.Entities.GetAbility( hero, i );
@@ -67,6 +70,7 @@
 					i++;
 				}
 			}
+			hideOrSeek();
 		}
 		
 		public function gainedLevel( e:TimerEvent ) {
@@ -76,12 +80,13 @@
 			// check if the owner exists
 			if( pID != null ) {
 				var i = 0;
-					while (i < 6) {
+					while (i < splCount) {
 						// hide the valve pips
 						if( this.globals.Loader_actionpanel.movieClip.middle.abilities["abilityLevelPips"+i].visible ) this.globals.Loader_actionpanel.movieClip.middle.abilities["abilityLevelPips"+i].visible = false;
 						i++;
 					}
 			}
+			hideOrSeek();
 		}
 		
 		public function updatePip( slot:int, ent:* ) {
@@ -176,14 +181,49 @@
 			Globals.instance.resizeManager.AddListener(this);
 			
 			// our events
+			this.gameAPI.SubscribeToGameEvent("send_hero_ent", this.getHeroEnt);
 			this.gameAPI.SubscribeToGameEvent("dota_ability_changed", this.abilityTimer);
 			this.gameAPI.SubscribeToGameEvent("dota_player_gained_level", this.levelTimer);
+			this.gameAPI.SubscribeToGameEvent("dota_player_update_selected_unit", this.hideOrSeek);
+			this.gameAPI.SubscribeToGameEvent("dota_player_update_query_unit", this.hideOrSeek);
+		
 			timer.addEventListener(TimerEvent.TIMER_COMPLETE, abilityChanged);
 			hlTimer.addEventListener(TimerEvent.TIMER_COMPLETE, gainedLevel);
 			
 			// set the pips to null at init, this is probably not needed but MEH
 			for( var i = 0; i < 6; i++) {
 				pips[i] = null;
+			}
+		}
+		
+		public function getHeroEnt( args:Object = null ) {
+			if( args != null ) {
+				heroEnt = args._ent;
+			}
+		}
+		
+		public function hideOrSeek( args:Object = null ) {
+			var pID = globals.Players.GetLocalPlayer();
+			
+			if( globals.Players.GetQueryUnit(pID)=="-1" && globals.Players.GetSelectedEntities(pID)[0]==heroEnt ) seekMe();
+				else hideMe();
+		}
+		
+		public function hideMe() {
+			var i = 0;
+			while (i < splCount) {
+				if( pips[i]!=null ) pips[i].visible = false;
+				i++;
+			}
+		}
+		
+		public function seekMe() {
+			hlTimer.reset();
+			hlTimer.start();
+			var i = 0;
+			while (i < splCount) {
+				if( pips[i]!=null ) pips[i].visible = true;
+				i++;
 			}
 		}
 		
