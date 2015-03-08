@@ -62,10 +62,13 @@
 					
 					// checks if ability is null, is attribute bonus (no pip needed for that), is empty or is hidden
 					if( ability != null && this.globals.Abilities.GetAbilityName(ability)!="attribute_bonus" && this.globals.Abilities.GetAbilityName(ability)!="" && !globals.Abilities.IsHidden(ability) ) {
+						//additional check if the ability has an AbilitySpecial "pip_show"
+						if( globals.Abilities.GetLevelSpecialValueFor( ability, 'pip_show', globals.Abilities.GetLevel(ability) ) != 0 ) {
 						
-						// if the pip exists, it updates the text and positioning, otherwise it creates a new one
-						if( pips[i] != null ) updatePip(i, ability);
-							else pips[i] = createNewPip(i, ability);
+							// if the pip exists, it updates the text and positioning, otherwise it creates a new one
+							if( pips[i] != null ) updatePip(i, ability);
+								else pips[i] = createNewPip(i, ability);
+						}
 							
 					// if the ability is null, attr_bonus or empty, clear the pip
 					} else if( pips[i] != null ) pips[i] = null;
@@ -102,7 +105,12 @@
 			txFormat.align = "center";
 			pips[slot].getChildByName("txtField").multiline = false;
 			pips[slot].getChildByName("txtField").wordWrap = false;
-			pips[slot].getChildByName("txtField").text = globals.Abilities.GetLevel(ent) + "/" + globals.Abilities.GetMaxLevel(ent);
+			var curLevel:Number = globals.Abilities.GetLevel(ent);
+			var maxLevel:Number = globals.Abilities.GetMaxLevel(ent);
+			// check for overrides in AbilitySpecial
+			if( globals.Abilities.GetLevelSpecialValueFor(ent, 'pip_current', globals.Abilities.GetLevel(ent)) ) curLevel = globals.Abilities.GetLevelSpecialValueFor(ent, 'pip_current', globals.Abilities.GetLevel(ent));
+			if( globals.Abilities.GetLevelSpecialValueFor(ent, 'pip_max', globals.Abilities.GetLevel(ent)) ) maxLevel = globals.Abilities.GetLevelSpecialValueFor(ent, 'pip_max', globals.Abilities.GetLevel(ent));
+			pips[slot].getChildByName("txtField").text = curLevel.toString() + "/" + maxLevel.toString();
 			pips[slot].getChildByName("txtField").selectable = false;
 			pips[slot].getChildByName("txtField").setTextFormat(txFormat);
 			
