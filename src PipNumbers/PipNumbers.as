@@ -145,7 +145,12 @@
 			txField.autoSize = "center";
 			txField.multiline = false;
 			txField.wordWrap = false;
-			txField.text = globals.Abilities.GetLevel(ent) + "/" + globals.Abilities.GetMaxLevel(ent);
+			var curLevel:Number = globals.Abilities.GetLevel(ent);
+			var maxLevel:Number = globals.Abilities.GetMaxLevel(ent);
+			// check for overrides in AbilitySpecial
+			if( globals.Abilities.GetLevelSpecialValueFor(ent, 'pip_current', globals.Abilities.GetLevel(ent)) ) curLevel = globals.Abilities.GetLevelSpecialValueFor(ent, 'pip_current', globals.Abilities.GetLevel(ent));
+			if( globals.Abilities.GetLevelSpecialValueFor(ent, 'pip_max', globals.Abilities.GetLevel(ent)) ) maxLevel = globals.Abilities.GetLevelSpecialValueFor(ent, 'pip_max', globals.Abilities.GetLevel(ent));
+			pips[slot].getChildByName("txtField").text = curLevel.toString() + "/" + maxLevel.toString();
 			txField.selectable = false;
 			//txField.background = true;
 			//txField.backgroundColor = 0x000000;
