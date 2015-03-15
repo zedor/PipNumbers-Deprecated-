@@ -224,8 +224,13 @@
 		}
 		
 		public function getHeroEnt( args:Object = null ) {
-			if( args != null ) {
+			var pID = globals.Players.GetLocalPlayer();
+			
+			trace('[pipNumbers] send_hero_ent received, pID:', args.player_ID + '; ent:', args._ent+'; local pID:', pID);
+			
+			if( args.player_ID == pID ) {
 				heroEnt = args._ent;
+				trace('[pipNumbers] ID check passed');
 			}
 		}
 		
