@@ -1,3 +1,5 @@
+## Flash/Scaleform is deprecated in Dota2Reborn. No further support for this module.
+
 # PipNumbers
 
 Shows numbers instead of the normal ability level indicators (pips)
